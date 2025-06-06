@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://r4m5tori423b"]
+
+[ext_resource type="Resource" uid="uid://ddw64bv75q5dm" path="res://resources/power_enemy_settings.res" id="1_sxn62"]
+[ext_resource type="Script" uid="uid://clvf0w71ifae2" path="res://scripts/Wave.cs" id="1_wirpd"]
+
+[resource]
+script = ExtResource("1_wirpd")
+Enemies = [ExtResource("1_sxn62"), ExtResource("1_sxn62"), ExtResource("1_sxn62"), ExtResource("1_sxn62"), ExtResource("1_sxn62")]
