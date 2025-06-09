@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8riicw06n3b6"]
+
+[ext_resource type="PackedScene" uid="uid://bswsr07vxsxwy" path="res://assets/GLB/nusantara/home_sunda_aja.glb" id="1_x1r5h"]
+
+[node name="home_sunda_aja" instance=ExtResource("1_x1r5h")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)

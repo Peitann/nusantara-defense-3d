@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://4qhecfl0knvo"]
+
+[ext_resource type="PackedScene" uid="uid://br3xi5j8tg7yl" path="res://assets/GLB/nusantara/kapal_belanda.glb" id="1_my7bf"]
+[ext_resource type="PackedScene" uid="uid://c5udqgnysu44o" path="res://scenes/tile_empty.tscn" id="2_vlxcd"]
+
+[node name="convert" instance=ExtResource("1_my7bf")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.80098, 0)
+
+[node name="texture_pbr_v128" parent="." index="0"]
+transform = Transform3D(4, 0, 0, 0, -1.74846e-07, -4, 0, 4, -1.74846e-07, 0, 0.885128, 0)
+
+[node name="TileEmpty" parent="." index="1" instance=ExtResource("2_vlxcd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 2.60767, 0, -0.81572, -0.148125)

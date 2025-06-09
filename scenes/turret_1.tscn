@@ -211,7 +211,6 @@ radius = 3.0
 
 [node name="Turret1" type="Node3D"]
 script = ExtResource("1_gka4j")
-FireRateMs = 100
 ProjectileType = ExtResource("2_duspt")
 
 [node name="Cannon" type="Node3D" parent="."]

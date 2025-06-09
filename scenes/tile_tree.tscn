@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://5nvpjyffqt6e"]
 
-[ext_resource type="PackedScene" uid="uid://chcs51hvpbwnl" path="res://assets/tile_tree.glb" id="1_6mju3"]
+[ext_resource type="PackedScene" uid="uid://chcs51hvpbwnl" path="res://assets/GLB/tile_tree.glb" id="1_6mju3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pnkph"]
 

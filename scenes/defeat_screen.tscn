@@ -1,0 +1,145 @@
+[gd_scene load_steps=7 format=3 uid="uid://ccbqq0k5kuwow"]
+
+[ext_resource type="Script" uid="uid://7icd0b081int" path="res://scripts/DefeatScreen.cs" id="1_defeat_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_background"]
+bg_color = Color(0.1, 0, 0, 0.8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main_panel"]
+bg_color = Color(0.2, 0.1, 0.1, 0.95)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0.6, 0.3, 0.3, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="Theme" id="Theme_defeat"]
+default_font_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+bg_color = Color(0.4, 0.2, 0.2, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.7, 0.4, 0.4, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
+bg_color = Color(0.3, 0.15, 0.15, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.6, 0.3, 0.3, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="DefeatScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_defeat_script")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_background")
+
+[node name="MainPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -150.0
+offset_right = 250.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_main_panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_defeat")
+theme_override_colors/font_color = Color(0.8, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 48
+text = "DEFEAT"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="SubtitleLabel" type="Label" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.7, 0.4, 1)
+theme_override_font_sizes/font_size = 32
+text = "REMPAH TELAH DICURI"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="ButtonContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="RetryButton" type="Button" parent="MainPanel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(120, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.8, 0.7, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "Coba Lagi"
+
+[node name="HSeparator3" type="HSeparator" parent="MainPanel/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="MenuButton" type="Button" parent="MainPanel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(120, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.8, 0.7, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "Kembali ke Menu"
+
+[connection signal="pressed" from="MainPanel/VBoxContainer/ButtonContainer/RetryButton" to="." method="_on_retry_button_pressed"]
+[connection signal="pressed" from="MainPanel/VBoxContainer/ButtonContainer/MenuButton" to="." method="_on_menu_button_pressed"]

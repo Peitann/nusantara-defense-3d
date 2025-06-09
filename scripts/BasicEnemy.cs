@@ -147,4 +147,27 @@ public partial class BasicEnemy : Node3D
 			GetNode("EnemyStateChart").Call("send_event", "to_dying_state");
 		}
 	}
+	
+	// Method yang dipanggil ketika enemy mencapai akhir path
+	private async void _on_reaching_end_state_entered()
+	{
+		// Damage player ketika enemy mencapai Tile Start
+		var main = GetTree().CurrentScene as Main;
+		if (main != null)
+		{
+			main.TakeDamage(EnemySettings.Damage);
+		}
+		
+		// Hide enemy
+		attackable = false;
+		progressBar.Visible = false;
+		GetNode<Node3D>("Path3D/PathFollow3D/Enemy").Visible = false;
+		
+		// Emit signal bahwa enemy selesai
+		EmitSignal(SignalName.EnemyFinished);
+		
+		// Remove enemy after short delay
+		await ToSignal(GetTree().CreateTimer(0.5f), SceneTreeTimer.SignalName.Timeout);
+		QueueFree();
+	}
 }

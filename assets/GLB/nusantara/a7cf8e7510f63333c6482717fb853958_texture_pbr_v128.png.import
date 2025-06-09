@@ -1,0 +1,38 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://cb6gghnarmswa"
+path.s3tc="res://.godot/imported/a7cf8e7510f63333c6482717fb853958_texture_pbr_v128.png-bf838af01bd34da79262f14f8b48658d.s3tc.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
+}
+generator_parameters={
+"md5": "680606047319dc24ce5eb556f3a0ee8a"
+}
+
+[deps]
+
+source_file="res://assets/GLB/nusantara/a7cf8e7510f63333c6482717fb853958_texture_pbr_v128.png"
+dest_files=["res://.godot/imported/a7cf8e7510f63333c6482717fb853958_texture_pbr_v128.png-bf838af01bd34da79262f14f8b48658d.s3tc.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=0

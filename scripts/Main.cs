@@ -27,6 +27,14 @@ public partial class Main : Node3D
 
 	[Export] public int Cash { get; set; } = 100;
 
+	// Tambahkan property untuk player health
+	[Export] public int PlayerHealth { get; set; } = 20;
+	[Export] public int MaxHealth { get; set; } = 20;
+	
+	// UI elements untuk health
+	private Label healthLabel;
+	private ProgressBar healthBar;
+
 	// Tambahkan method untuk mengubah cash jika diperlukan
 	public void SetCash(int newCash)
 	{
@@ -54,8 +62,33 @@ public partial class Main : Node3D
 		
 		cam = GetNode<Camera3D>("Camera3D");
 		
-		// Akses PathGenInstance sebagai PathGenerator langsung
+		// Akses PathGenInstance dengan error checking
 		PathGenInstance = GetNode("/root/PathGenInstance") as PathGenerator;
+		if (PathGenInstance == null)
+		{
+			GD.PrintErr("PathGenInstance not found! Check AutoLoad settings.");
+			return;
+		}
+		
+		// Debug PathGen info
+		GD.Print($"PathGenInstance found: {PathGenInstance}");
+		GD.Print($"Map config: {PathGenInstance.path_config}");
+		
+		// Inisialisasi UI health
+		try
+		{
+			healthLabel = GetNode<Label>("Control/HealthLabel");
+			healthBar = GetNode<ProgressBar>("Control/HealthBar");
+			
+			// Set initial values
+			healthBar.MaxValue = MaxHealth;
+			healthBar.Value = PlayerHealth;
+			UpdateHealthUI();
+		}
+		catch (System.Exception e)
+		{
+			GD.PrintErr($"Failed to initialize health UI: {e.Message}");
+		}
 		
 		CompleteGrid();
 	}
@@ -131,12 +164,60 @@ public partial class Main : Node3D
 		var pathRoute = PathGenInstance.get_path_route();
 
 		GD.Print($"Map size: {mapLength}x{mapHeight}, Path length: {pathRoute.Count}");
-
-		// Convert pathRoute to List<Vector2I>
-		var pathRouteList = new System.Collections.Generic.List<Vector2I>();
-		foreach (var point in pathRoute)
+		
+		// Debug: Print path route content
+		GD.Print($"PathRoute type: {pathRoute.GetType()}");
+		for (int i = 0; i < pathRoute.Count; i++)
 		{
-			pathRouteList.Add(point.AsVector2I());
+			GD.Print($"PathRoute[{i}]: {pathRoute[i]} (Type: {pathRoute[i].GetType()})");
+		}
+
+		// Convert pathRoute to List<Vector2I> dengan cara yang lebih sederhana
+		var pathRouteList = new System.Collections.Generic.List<Vector2I>();
+		
+		for (int i = 0; i < pathRoute.Count; i++)
+		{
+			var point = pathRoute[i];
+			Vector2I vector2I;
+			
+			try
+			{
+				// Coba konversi langsung dari Variant ke Vector2
+				var vec2 = point.AsVector2();
+				vector2I = new Vector2I((int)vec2.X, (int)vec2.Y);
+			}
+			catch
+			{
+				try
+				{
+					// Alternatif: coba konversi ke Vector2I langsung
+					vector2I = point.AsVector2I();
+				}
+				catch
+				{
+					GD.PrintErr($"Failed to convert point {i}: {point}");
+					continue;
+				}
+			}
+			
+			pathRouteList.Add(vector2I);
+			GD.Print($"Added to pathRouteList: {vector2I}");
+		}
+		
+		GD.Print($"Final pathRouteList count: {pathRouteList.Count}");
+
+		// Debug: Pastikan semua tile resources ada
+		GD.Print($"TileEmpty count: {TileEmpty?.Count ?? 0}");
+		GD.Print($"TileStart: {TileStart}");
+		GD.Print($"TileEnd: {TileEnd}");
+		GD.Print($"TileStraight: {TileStraight}");
+		GD.Print($"TileCorner: {TileCorner}");
+		GD.Print($"TileCrossroads: {TileCrossroads}");
+		
+		if (TileEmpty == null || TileEmpty.Count == 0)
+		{
+			GD.PrintErr("TileEmpty is null or empty!");
+			return;
 		}
 
 		// Generate empty tiles - sama persis dengan GDScript
@@ -154,6 +235,7 @@ public partial class Main : Node3D
 					AddChild(tile);
 					tile.GlobalPosition = new Vector3(x, 0, y);
 					tile.GlobalRotationDegrees = new Vector3(0, GD.RandRange(0, 3) * 90, 0);
+					GD.Print($"Created empty tile at ({x}, {y})");
 				}
 			}
 		}
@@ -162,7 +244,8 @@ public partial class Main : Node3D
 		for (int i = 0; i < pathRoute.Count; i++)
 		{
 			int tileScore = PathGenInstance.get_tile_score(i);
-			GD.Print($"Tile {i}: score {tileScore}, position {PathGenInstance.get_path_tile(i)}");
+			var pathTile = PathGenInstance.get_path_tile(i);
+			GD.Print($"Tile {i}: score {tileScore}, position {pathTile}");
 			
 			var tile = TileEmpty[0].Instantiate() as Node3D;
 			var tileRotation = Vector3.Zero;
@@ -215,10 +298,9 @@ public partial class Main : Node3D
 			}
 
 			AddChild(tile);
-			
-			var pathTile = PathGenInstance.get_path_tile(i);
 			tile.GlobalPosition = new Vector3(pathTile.X, 0, pathTile.Y);
 			tile.GlobalRotationDegrees = tileRotation;
+			GD.Print($"Created path tile at ({pathTile.X}, {pathTile.Y}) with score {tileScore}");
 		}
 	}
 
@@ -229,7 +311,22 @@ public partial class Main : Node3D
 
 	public void TakeDamage(int damage)
 	{
-		GD.Print($"Player took {damage} damage!");
+		PlayerHealth -= damage;
+		PlayerHealth = Mathf.Max(0, PlayerHealth); // Pastikan tidak negatif
+		
+		UpdateHealthUI();
+		GD.Print($"Player took {damage} damage! Health: {PlayerHealth}/{MaxHealth}");
+		
+		// Check game over
+		CheckGameEnd();
+	}
+
+	private void UpdateHealthUI()
+	{
+		if (healthLabel != null)
+			healthLabel.Text = $"Health: {PlayerHealth}/{MaxHealth}";
+		if (healthBar != null)
+			healthBar.Value = PlayerHealth;
 	}
 
 	// Signal handlers
@@ -248,5 +345,39 @@ public partial class Main : Node3D
 	{
 		currentWaveIndex += 1;
 		GetNode<Button>("StartWaveButton").Disabled = false;
+		
+		// Check if all waves completed
+		CheckGameEnd();
+	}
+
+	// Method untuk menangani win/lose conditions
+	private void CheckGameEnd()
+	{
+		// Player kalah jika health habis
+		if (PlayerHealth <= 0)
+		{
+			ShowDefeatScreen();
+			return;
+		}
+
+		// Cek jika semua wave sudah diselesaikan
+		if (currentWaveIndex >= EnemyWaves.Count)
+		{
+			ShowWinScreen();
+			return;
+		}
+	}
+
+	public void ShowWinScreen()
+	{
+		var winScreen = GD.Load<PackedScene>("res://scenes/win_screen.tscn").Instantiate() as WinScreen;
+		GetTree().CurrentScene.AddChild(winScreen);
+		winScreen.SetScore(Cash); // Atau sistem scoring lain
+	}
+
+	public void ShowDefeatScreen()
+	{
+		var defeatScreen = GD.Load<PackedScene>("res://scenes/defeat_screen.tscn").Instantiate() as DefeatScreen;
+		GetTree().CurrentScene.AddChild(defeatScreen);
 	}
 }
