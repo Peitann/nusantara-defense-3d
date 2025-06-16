@@ -6,8 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://4qhecfl0knvo" path="res://scenes/kapal_belanda.tscn" id="3_pm3ni"]
 [ext_resource type="PackedScene" uid="uid://b0m7jbd1q4hru" path="res://scenes/tile_corner.tscn" id="4_l0s0x"]
 [ext_resource type="PackedScene" uid="uid://cmnge1crd337m" path="res://scenes/tile_crossroads.tscn" id="5_cscfw"]
-[ext_resource type="PackedScene" uid="uid://bcpa3ytho1jjr" path="res://assets/GLB/enemy_ufoPurple.glb" id="6_5cncu"]
 [ext_resource type="PackedScene" uid="uid://bhk0fkhmgwaa6" path="res://scenes/tile_crystal.tscn" id="7_3srkm"]
+[ext_resource type="PackedScene" uid="uid://dt56ehsr5mikm" path="res://assets/GLB/nusantara/tentara_belanda.glb" id="7_jscy8"]
 [ext_resource type="PackedScene" uid="uid://b0i2ekupvlahh" path="res://scenes/tile_rock.tscn" id="8_w37o2"]
 [ext_resource type="PackedScene" uid="uid://5nvpjyffqt6e" path="res://scenes/tile_tree.tscn" id="9_o0h1j"]
 [ext_resource type="PackedScene" uid="uid://c5udqgnysu44o" path="res://scenes/tile_empty.tscn" id="10_isnq1"]
@@ -40,7 +40,7 @@ TileEnd = ExtResource("3_pm3ni")
 TileStraight = ExtResource("3_luvjy")
 TileCorner = ExtResource("4_l0s0x")
 TileCrossroads = ExtResource("5_cscfw")
-TileEnemy = ExtResource("6_5cncu")
+TileEnemy = ExtResource("7_jscy8")
 TileEmpty = Array[PackedScene]([ExtResource("7_3srkm"), ExtResource("8_w37o2"), ExtResource("9_o0h1j"), ExtResource("10_isnq1"), ExtResource("10_isnq1"), ExtResource("10_isnq1"), ExtResource("10_isnq1"), ExtResource("10_isnq1"), ExtResource("12_jscy8")])
 Enemy = ExtResource("11_qo57y")
 EnemyWaves = Array[Resource]([ExtResource("12_u0m8d"), ExtResource("13_etu8d")])

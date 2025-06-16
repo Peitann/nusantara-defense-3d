@@ -74,9 +74,21 @@ public partial class BasicEnemy : Node3D
 		QueueFree();
 	}
 
+	// MODIFIKASI: Ubah damage menjadi 2 per enemy
 	private void _on_damaging_state_entered()
 	{
 		attackable = false;
+		
+		// Damage player ketika enemy mencapai akhir path dengan 2 damage
+		var main = GetTree().CurrentScene as Main;
+		if (main != null)
+		{
+			// Hard-code damage 2 per enemy (tidak tergantung EnemySettings)
+			int damage = 2;
+			main.TakeDamage(damage);
+			GD.Print($"Enemy reached end! Player took {damage} damage");
+		}
+		
 		GetNode("EnemyStateChart").Call("send_event", "to_despawning_state");
 	}
 
@@ -90,11 +102,11 @@ public partial class BasicEnemy : Node3D
 		GetNode<GpuParticles3D>("Path3D/PathFollow3D/Smoke").Emitting = true;
 		GetNode<GpuParticles3D>("Path3D/PathFollow3D/Explosion").Emitting = true;
 		
-		// Add cash to parent (main scene) - menggunakan property langsung
+		// MODIFIKASI: Gunakan method AddCash untuk consistency
 		var main = GetTree().CurrentScene as Main;
 		if (main != null)
 		{
-			main.Cash += EnemySettings.Value;
+			main.AddCash(EnemySettings.Value);
 		}
 
 		var explosionAudio = GetNode<AudioStreamPlayer>("ExplosionAudio");
@@ -148,14 +160,17 @@ public partial class BasicEnemy : Node3D
 		}
 	}
 	
-	// Method yang dipanggil ketika enemy mencapai akhir path
+	// MODIFIKASI: Update method ini juga jika masih digunakan
 	private async void _on_reaching_end_state_entered()
 	{
-		// Damage player ketika enemy mencapai Tile Start
+		// Damage player ketika enemy mencapai Tile Start dengan 2 damage
 		var main = GetTree().CurrentScene as Main;
 		if (main != null)
 		{
-			main.TakeDamage(EnemySettings.Damage);
+			// Hard-code damage 2 per enemy
+			int damage = 2;
+			main.TakeDamage(damage);
+			GD.Print($"Enemy reached end! Player took {damage} damage");
 		}
 		
 		// Hide enemy

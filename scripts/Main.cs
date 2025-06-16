@@ -27,15 +27,25 @@ public partial class Main : Node3D
 
 	[Export] public int Cash { get; set; } = 100;
 
-	// Tambahkan property untuk player health
-	[Export] public int PlayerHealth { get; set; } = 20;
+	// Property untuk player health dengan real-time UI update
+	private int _playerHealth = 20;
+	[Export] 
+	public int PlayerHealth 
+	{ 
+		get => _playerHealth;
+		set
+		{
+			_playerHealth = value;
+			UpdateHealthUI(); // Otomatis update UI setiap kali health berubah
+		}
+	}
 	[Export] public int MaxHealth { get; set; } = 20;
 	
 	// UI elements untuk health
 	private Label healthLabel;
 	private ProgressBar healthBar;
 
-	// Tambahkan method untuk mengubah cash jika diperlukan
+	// Method cash management
 	public void SetCash(int newCash)
 	{
 		Cash = newCash;
@@ -74,20 +84,25 @@ public partial class Main : Node3D
 		GD.Print($"PathGenInstance found: {PathGenInstance}");
 		GD.Print($"Map config: {PathGenInstance.path_config}");
 		
-		// Inisialisasi UI health
+		// Inisialisasi UI health dengan initial value assignment
 		try
 		{
 			healthLabel = GetNode<Label>("Control/HealthLabel");
 			healthBar = GetNode<ProgressBar>("Control/HealthBar");
 			
 			// Set initial values
-			healthBar.MaxValue = MaxHealth;
-			healthBar.Value = PlayerHealth;
+			if (healthBar != null)
+			{
+				healthBar.MaxValue = MaxHealth;
+				healthBar.Value = PlayerHealth;
+			}
 			UpdateHealthUI();
 		}
 		catch (System.Exception e)
 		{
 			GD.PrintErr($"Failed to initialize health UI: {e.Message}");
+			healthLabel = null;
+			healthBar = null;
 		}
 		
 		CompleteGrid();
@@ -309,18 +324,22 @@ public partial class Main : Node3D
 		return PathGenInstance.get_path_route();
 	}
 
+	// MODIFIKASI: TakeDamage sekarang menerima damage 2 per enemy dan update UI real-time
 	public void TakeDamage(int damage)
 	{
-		PlayerHealth -= damage;
-		PlayerHealth = Mathf.Max(0, PlayerHealth); // Pastikan tidak negatif
+		PlayerHealth -= damage; // Ini akan otomatis trigger UpdateHealthUI via property setter
+		PlayerHealth = Mathf.Max(0, PlayerHealth);
 		
-		UpdateHealthUI();
 		GD.Print($"Player took {damage} damage! Health: {PlayerHealth}/{MaxHealth}");
 		
-		// Check game over
-		CheckGameEnd();
+		// Check game over IMMEDIATELY setelah damage
+		if (PlayerHealth <= 0)
+		{
+			CheckGameEnd();
+		}
 	}
 
+	// Method untuk update health UI (dipanggil otomatis oleh property setter)
 	private void UpdateHealthUI()
 	{
 		if (healthLabel != null)
@@ -329,7 +348,7 @@ public partial class Main : Node3D
 			healthBar.Value = PlayerHealth;
 	}
 
-	// Signal handlers
+	// Signal handlers - tetap sama
 	private void _on_start_wave_button_pressed()
 	{
 		GetNode("StateChart").Call("send_event", "to_active");
@@ -350,7 +369,7 @@ public partial class Main : Node3D
 		CheckGameEnd();
 	}
 
-	// Method untuk menangani win/lose conditions
+	// Method untuk menangani win/lose conditions - tetap sama
 	private void CheckGameEnd()
 	{
 		// Player kalah jika health habis

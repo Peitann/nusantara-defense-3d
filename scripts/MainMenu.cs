@@ -10,8 +10,16 @@ public partial class MainMenu : Control
 	public override void _Ready()
 	{
 		// Get references to UI elements
-		titleImage = GetNode<TextureRect>("CenterContainer/VBoxContainer/TitleContainer/TitleImage");
-		buttonContainer = GetNode<VBoxContainer>("CenterContainer/VBoxContainer/ButtonContainer");
+		try
+		{
+			titleImage = GetNode<TextureRect>("CenterContainer/VBoxContainer/TitleContainer/TitleImage");
+			buttonContainer = GetNode<VBoxContainer>("CenterContainer/VBoxContainer/ButtonContainer");
+		}
+		catch (System.Exception e)
+		{
+			GD.PrintErr($"Could not find node: {e.Message}");
+			return; // Skip further processing in _Ready
+		}
 		
 		// Setup audio
 		SetupAudio();
