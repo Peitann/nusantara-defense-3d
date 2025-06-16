@@ -44,6 +44,9 @@ public partial class Main : Node3D
 	// UI elements untuk health
 	private Label healthLabel;
 	private ProgressBar healthBar;
+	
+	// TAMBAHAN: Pause system
+	private PauseMenu pauseMenu;
 
 	// Method cash management
 	public void SetCash(int newCash)
@@ -105,7 +108,39 @@ public partial class Main : Node3D
 			healthBar = null;
 		}
 		
+		// TAMBAHAN: Setup pause menu
+		try
+		{
+			pauseMenu = GetNode<PauseMenu>("Control/PauseMenuUI");
+			if (pauseMenu != null)
+			{
+				GD.Print("Pause menu found and ready");
+			}
+			else
+			{
+				GD.PrintErr("PauseMenuUI not found in scene tree");
+			}
+		}
+		catch (System.Exception e)
+		{
+			GD.PrintErr($"Failed to setup pause menu: {e.Message}");
+		}
+		
 		CompleteGrid();
+	}
+
+	// TAMBAHAN: Input handling untuk pause
+	public override void _Input(InputEvent @event)
+	{
+		// Handle pause input - hanya jika game tidak sedang paused
+		if (@event.IsActionPressed("ui_cancel") || (@event is InputEventKey keyEvent && keyEvent.Keycode == Key.Escape && keyEvent.Pressed))
+		{
+			if (pauseMenu != null && !pauseMenu.IsPaused())
+			{
+				pauseMenu.PauseGame();
+				GetViewport().SetInputAsHandled();
+			}
+		}
 	}
 
 	public override void _Process(double delta)
@@ -367,6 +402,22 @@ public partial class Main : Node3D
 		
 		// Check if all waves completed
 		CheckGameEnd();
+	}
+
+	// TAMBAHAN: Pause menu signal handlers
+	private void _on_pause_menu_ui_resume_requested()
+	{
+		GD.Print("Resume game requested from pause menu");
+	}
+
+	private void _on_pause_menu_ui_restart_requested()
+	{
+		GD.Print("Restart game requested from pause menu");
+	}
+
+	private void _on_pause_menu_ui_main_menu_requested()
+	{
+		GD.Print("Main menu requested from pause menu");
 	}
 
 	// Method untuk menangani win/lose conditions - tetap sama

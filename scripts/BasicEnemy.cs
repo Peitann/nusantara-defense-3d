@@ -95,24 +95,25 @@ public partial class BasicEnemy : Node3D
 	private async void _on_dying_state_entered()
 	{
 		attackable = false;
-		progressBar.Visible = false;
-		GetNode<Node3D>("Path3D/PathFollow3D/Enemy").Visible = false;
-		EmitSignal(SignalName.EnemyFinished);
 		
-		GetNode<GpuParticles3D>("Path3D/PathFollow3D/Smoke").Emitting = true;
-		GetNode<GpuParticles3D>("Path3D/PathFollow3D/Explosion").Emitting = true;
-		
-		// MODIFIKASI: Gunakan method AddCash untuk consistency
+		// Award cash to player when enemy dies
 		var main = GetTree().CurrentScene as Main;
 		if (main != null)
 		{
-			main.AddCash(EnemySettings.Value);
+			int cashReward = 10; // Base cash reward per enemy
+			main.AddCash(cashReward);
+			GD.Print($"Enemy died - awarded ${cashReward} cash");
 		}
-
-		var explosionAudio = GetNode<AudioStreamPlayer>("ExplosionAudio");
-		explosionAudio.Play();
-		await ToSignal(explosionAudio, AudioStreamPlayer.SignalName.Finished);
-		GetNode("EnemyStateChart").Call("send_event", "to_remove_enemy_state");
+		
+		// Hide enemy visuals
+		progressBar.Visible = false;
+		GetNode<Node3D>("Path3D/PathFollow3D/Enemy").Visible = false;
+		
+		// Emit signal bahwa enemy selesai
+		EmitSignal(SignalName.EnemyFinished);
+		
+		// Remove enemy setelah delay pendek
+		GetTree().CreateTimer(0.5f).Timeout += () => QueueFree();
 	}
 
 	private Curve3D PathRouteToCurve3D()

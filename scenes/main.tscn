@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://72lu3y2bauhu"]
+[gd_scene load_steps=26 format=3 uid="uid://72lu3y2bauhu"]
 
 [ext_resource type="Script" uid="uid://cfpul6gnn5w3d" path="res://scripts/Main.cs" id="1_o6xl0"]
 [ext_resource type="PackedScene" uid="uid://dci8ne5veyud5" path="res://scenes/spice_stall.tscn" id="3_jscy8"]
@@ -18,6 +18,8 @@
 [ext_resource type="Resource" uid="uid://r4m5tori423b" path="res://resources/wave_02.tres" id="13_etu8d"]
 [ext_resource type="Texture2D" uid="uid://dnwe442illoox" path="res://images/cannon01a.png" id="13_x1qgb"]
 [ext_resource type="PackedScene" uid="uid://bw7qjsw1xnlvj" path="res://scenes/turret_1.tscn" id="14_8uhva"]
+[ext_resource type="PackedScene" uid="uid://ktnuvo58p6h5" path="res://scenes/pause_menu_ui.tscn" id="15_pause"]
+[ext_resource type="Script" uid="uid://drur7j5rul8jk" path="res://scripts/ProgressBar.cs" id="16_progressbar"]
 [ext_resource type="Script" uid="uid://c6t14camqp238" path="res://addons/godot_state_charts/state_chart.gd" id="17_cb2p7"]
 [ext_resource type="Script" uid="uid://b2b12rd0xboge" path="res://addons/godot_state_charts/compound_state.gd" id="18_qn1i5"]
 [ext_resource type="Script" uid="uid://cfylqtgpd3477" path="res://addons/godot_state_charts/atomic_state.gd" id="19_rlpe7"]
@@ -122,6 +124,11 @@ grow_vertical = 0
 max_value = 20.0
 value = 20.0
 show_percentage = false
+script = ExtResource("16_progressbar")
+
+[node name="PauseMenuUI" parent="Control" instance=ExtResource("15_pause")]
+layout_mode = 1
+theme = null
 
 [node name="StateChart" type="Node" parent="."]
 script = ExtResource("17_cb2p7")
@@ -159,6 +166,9 @@ offset_right = 8.0
 offset_bottom = 8.0
 text = "Start Wave"
 
+[connection signal="OnMainMenuRequested" from="Control/PauseMenuUI" to="." method="_on_pause_menu_ui_main_menu_requested"]
+[connection signal="OnRestartRequested" from="Control/PauseMenuUI" to="." method="_on_pause_menu_ui_restart_requested"]
+[connection signal="OnResumeRequested" from="Control/PauseMenuUI" to="." method="_on_pause_menu_ui_resume_requested"]
 [connection signal="state_entered" from="StateChart/CompoundState/Complete" to="." method="_on_complete_state_entered"]
 [connection signal="state_entered" from="StateChart/CompoundState/Active" to="." method="_on_active_state_entered"]
 [connection signal="pressed" from="StartWaveButton" to="." method="_on_start_wave_button_pressed"]
