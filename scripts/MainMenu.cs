@@ -138,15 +138,16 @@ Terinspirasi dari perjuangan heroik bangsa Indonesia melawan penjajahan kolonial
 Rempah-rempah seperti pala, cengkeh, lada hitam, dan kayu manis adalah komoditas berharga yang menjadikan Nusantara sebagai pusat perdagangan dunia selama berabad-abad.
 
 ⚔️ PERLAWANAN HEROIK
-Kerajaan-kerajaan Nusantara seperti Majapahit, Sriwijaya, dan Aceh mempertahankan kedaulatan dengan gagah berani melawan invasi bangsa asing.
-
-🏛️ WARISAN BUDAYA
-Arsitektur tradisional, sistem pertahanan, dan semangat gotong royong menjadi kekuatan utama dalam menghadapi tantangan.
+Kerajaan-kerajaan Nusantara mempertahankan kedaulatan dengan gagah berani melawan invasi bangsa asing.
 
 'Lebih baik mati berdiri daripada hidup berlutut'
-- Semangat perjuangan yang tidak pernah padam";
+- Semangat perjuangan yang tidak pernah padam
+
+Game ini menggunakan Template dari WideArchShark dari Youtube & Github
+
+Dimodifikasi oleh : Ahmad Fatan Haidar (231524034) D4-2B";
 		
-		dialog.Size = new Vector2I(600, 500);
+		dialog.Size = new Vector2I(600, 600);
 		
 		AddChild(dialog);
 		dialog.PopupCentered();
