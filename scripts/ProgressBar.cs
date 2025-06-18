@@ -10,7 +10,8 @@ public partial class ProgressBar : Godot.ProgressBar
 		try
 		{
 			healthStylebox = GetThemeStylebox("fill") as StyleBoxFlat;
-			healthBarGradient = GD.Load<Gradient>("res://resources/health_bar_colours.res");
+			var gradientTexture = GD.Load<GradientTexture1D>("res://resources/health_bar_colours.res");
+			healthBarGradient = gradientTexture.Gradient;
 			
 			// Connect value changed signal
 			ValueChanged += OnValueChanged;

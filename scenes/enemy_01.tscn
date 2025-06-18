@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ct27ttxc0bn0k" path="res://scripts/BasicEnemy.cs" id="1_46btu"]
 [ext_resource type="Script" uid="uid://c6t14camqp238" path="res://addons/godot_state_charts/state_chart.gd" id="2_5wlrk"]
-[ext_resource type="Script" uid="uid://dcyk0a7snlh5q" path="res://scripts/EnemySettings.cs" id="2_x7q62"]
+[ext_resource type="Resource" path="res://resources/basic_enemy_settings.res" id="2_x7q62"]
 [ext_resource type="Script" uid="uid://b2b12rd0xboge" path="res://addons/godot_state_charts/compound_state.gd" id="3_ah54x"]
 [ext_resource type="Script" uid="uid://cfylqtgpd3477" path="res://addons/godot_state_charts/atomic_state.gd" id="4_oaeau"]
 [ext_resource type="Script" uid="uid://bo2n8kqyr7ew" path="res://addons/godot_state_charts/transition.gd" id="5_2ibju"]
