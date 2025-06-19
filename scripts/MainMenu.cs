@@ -6,7 +6,7 @@ public partial class MainMenu : Control
     private AudioStreamPlayer buttonSound;
     private TextureRect titleImage;
     private VBoxContainer buttonContainer;
-    
+
     public override void _Ready()
     {
         // Get references to UI elements
@@ -20,27 +20,27 @@ public partial class MainMenu : Control
             GD.PrintErr($"Could not find node: {e.Message}");
             return; // Skip further processing in _Ready
         }
-        
+
         // Setup audio
         SetupAudio();
-        
+
         // No entrance animations needed
-        
+
         // Setup button effects without animations
         SetupButtonEffects();
     }
-    
+
     private void SetupAudio()
     {
         // Background music
         menuMusic = new AudioStreamPlayer();
         AddChild(menuMusic);
-        
+
         // Button sound effects
         buttonSound = new AudioStreamPlayer();
         AddChild(buttonSound);
     }
-    
+
     private void SetupButtonEffects()
     {
         // Add hover effects to all buttons without animations
@@ -52,7 +52,7 @@ public partial class MainMenu : Control
             GetNode<Button>("CenterContainer/VBoxContainer/ButtonContainer/AboutButton"),
             GetNode<Button>("CenterContainer/VBoxContainer/ButtonContainer/ExitButton")
         };
-        
+
         foreach (var button in buttons)
         {
             if (button != null)
@@ -63,7 +63,7 @@ public partial class MainMenu : Control
             }
         }
     }
-    
+
     private void PlayButtonSound()
     {
         if (buttonSound != null && buttonSound.Stream != null)
@@ -71,47 +71,47 @@ public partial class MainMenu : Control
             buttonSound.Play();
         }
     }
-    
+
     // Signal handlers with no animations
     private void _on_start_button_pressed()
     {
         PlayButtonSound();
         GetTree().ChangeSceneToFile("res://scenes/main.tscn");
     }
-    
+
     private void _on_battlefield_button_pressed()
     {
         PlayButtonSound();
         GD.Print("Battlefield selection not implemented yet");
-        
+
         // For now, go to game
         GetTree().ChangeSceneToFile("res://scenes/main.tscn");
     }
-    
+
     private void _on_guide_button_pressed()
     {
         PlayButtonSound();
         ShowGuideDialog();
     }
-    
+
     private void _on_about_button_pressed()
     {
         PlayButtonSound();
         ShowAboutDialog();
     }
-    
+
     private void _on_exit_button_pressed()
     {
         PlayButtonSound();
         GetTree().Quit();
     }
-    
+
     private void ShowGuideDialog()
     {
         var dialog = new AcceptDialog();
         dialog.Title = "Panduan Permainan - Pertahanan Rempah Nusantara";
         dialog.DialogText = @"🎯 TUJUAN PERMAINAN
-Lindungi jalur perdagangan rempah dari invasi penjajah! Jangan biarkan musuh mencapai gudang rempah.
+Lindungi gudang rempah dari invasi penjajah! Jangan biarkan kondisi rempah mencapai nol.
 
 ⚔️ CARA BERMAIN
 • Klik 'MULAI GELOMBANG' untuk memulai serangan musuh
@@ -129,24 +129,29 @@ Lindungi jalur perdagangan rempah dari invasi penjajah! Jangan biarkan musuh men
 • Uang awal: $100
 • Meriam Dasar: $100
 • Meriam Kuat: $200
-• Setiap musuh memberikan $10-25
+• Setiap musuh memberikan $25
 
 ⚡ KONTROL
 • ESC: Pause/Resume game
 • Mouse: Drag & drop meriam
 • Klik: Interaksi dengan UI
 
+🌶️ KONDISI REMPAH
+• Kondisi Rempah: 5/5 (mulai penuh)
+• Setiap musuh yang lolos mengurangi 2 kondisi
+• Jika kondisi rempah habis, rempah akan dicuri!
+
 🏆 KEMENANGAN
 Bertahan hidup dan kalahkan semua gelombang musuh untuk mempertahankan kedaulatan Nusantara!";
-        
-        dialog.Size = new Vector2I(650, 700);
-        
+
+        dialog.Size = new Vector2I(650, 750);
+
         AddChild(dialog);
         dialog.PopupCentered();
-        
+
         dialog.Confirmed += () => dialog.QueueFree();
     }
-    
+
     private void ShowAboutDialog()
     {
         var dialog = new AcceptDialog();
@@ -167,15 +172,15 @@ Kerajaan-kerajaan Nusantara mempertahankan kedaulatan dengan gagah berani melawa
 Game ini menggunakan Template dari WideArchShark dari Youtube & Github
 
 Dimodifikasi oleh : Ahmad Fatan Haidar (231524034) D4-2B";
-        
+
         dialog.Size = new Vector2I(600, 600);
-        
+
         AddChild(dialog);
         dialog.PopupCentered();
-        
+
         dialog.Confirmed += () => dialog.QueueFree();
     }
-    
+
     public override void _Input(InputEvent @event)
     {
         if (@event is InputEventKey keyEvent && keyEvent.Pressed)

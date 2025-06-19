@@ -1,10 +1,174 @@
-[gd_scene load_steps=3 format=3 uid="uid://4qhecfl0knvo"]
+[gd_scene load_steps=5 format=3 uid="uid://4qhecfl0knvo"]
 
 [ext_resource type="PackedScene" uid="uid://br3xi5j8tg7yl" path="res://assets/GLB/nusantara/kapal_belanda.glb" id="1_my7bf"]
 [ext_resource type="PackedScene" uid="uid://c5udqgnysu44o" path="res://scenes/tile_empty.tscn" id="2_vlxcd"]
+[ext_resource type="PackedScene" uid="uid://bui2kgul48s0x" path="res://scenes/cannonball.tscn" id="3_xtswe"]
+
+[sub_resource type="CSharpScript" id="CSharpScript_t671f"]
+script/source = "using Godot;
+
+public partial class TileEnd : Node3D
+{
+    [Export] public PackedScene ProjectileType { get; set; }
+    [Export] public int FireRateMs { get; set; } = 3000; // 3 detik default
+    [Export] public bool AutoFire { get; set; } = true; // Otomatis menembak atau tidak
+    [Export] public int ProjectileDamage { get; set; } = 1; // Damage ke base
+
+    private long lastFireTime = 0;
+    private Node3D projectileSpawn;
+    private Node3D targetBase; // Reference ke base player
+
+    public override void _Ready()
+    {
+        // Setup projectile spawn point
+        SetupProjectileSpawn();
+
+        // Cari base player
+        FindPlayerBase();
+
+        // Load default projectile jika belum di-set
+        if (ProjectileType == null)
+        {
+            ProjectileType = GD.Load<PackedScene>(\"res://scenes/projectile.tscn\");
+        }
+
+        GD.Print($\"TileEnd (Enemy Ship) ready - FireRate: {FireRateMs}ms, Damage: {ProjectileDamage}\");
+    }
+
+    public override void _Process(double delta)
+    {
+        if (AutoFire && targetBase != null)
+        {
+            MaybeFire();
+        }
+    }
+
+    private void SetupProjectileSpawn()
+    {
+        // Cari node projectile_spawn atau buat default
+        projectileSpawn = GetNode<Node3D>(\"projectile_spawn\");
+        if (projectileSpawn == null)
+        {
+            projectileSpawn = new Node3D();
+            projectileSpawn.Name = \"projectile_spawn\";
+            projectileSpawn.Position = new Vector3(0, 2, 0); // Posisi default di atas kapal
+            AddChild(projectileSpawn);
+            GD.Print(\"Created default projectile spawn point for TileEnd\");
+        }
+    }
+
+    private void FindPlayerBase()
+    {
+        // Cari base player di scene (biasanya TileStart)
+        var main = GetTree().CurrentScene as Main;
+        if (main != null)
+        {
+            // Cari TileStart di grid
+            for (int x = 0; x < main.GridSize; x++)
+            {
+                for (int y = 0; y < main.GridSize; y++)
+                {
+                    var tile = main.Grid[x, y];
+                    if (tile != null && tile.TileType == Tile.Type.Start)
+                    {
+                        // Cari TileStart node
+                        var tileStart = tile.GetNode<Node3D>(\"TileStart\");
+                        if (tileStart != null)
+                        {
+                            targetBase = tileStart;
+                            GD.Print($\"TileEnd found player base at position: {targetBase.GlobalPosition}\");
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Fallback: cari node dengan nama \"TileStart\" di scene
+        if (targetBase == null)
+        {
+            targetBase = GetTree().CurrentScene.GetNode<Node3D>(\"TileStart\");
+            if (targetBase != null)
+            {
+                GD.Print(\"TileEnd found player base via fallback method\");
+            }
+            else
+            {
+                GD.Print(\"Warning: TileEnd could not find player base!\");
+            }
+        }
+    }
+
+    private void MaybeFire()
+    {
+        if ((long)Time.GetTicksMsec() > (lastFireTime + FireRateMs))
+        {
+            FireProjectile();
+            lastFireTime = (long)Time.GetTicksMsec();
+        }
+    }
+
+    public void FireProjectile()
+    {
+        if (targetBase == null || ProjectileType == null) return;
+
+        GD.Print(\"TileEnd firing projectile at player base!\");
+
+        var projectile = ProjectileType.Instantiate() as Projectile;
+        if (projectile != null)
+        {
+            // Set projectile properties untuk menyerang base
+            projectile.StartingPosition = projectileSpawn.GlobalPosition;
+            projectile.Target = targetBase;
+            projectile.Speed = 2.0f; // Kecepatan projectile kapal belanda
+            projectile.Damage = ProjectileDamage; // 1 damage ke base
+
+            // Add projectile ke scene
+            GetTree().CurrentScene.AddChild(projectile);
+
+            GD.Print($\"TileEnd projectile fired at player base with {ProjectileDamage} damage\");
+        }
+        else
+        {
+            GD.Print(\"Failed to instantiate projectile from TileEnd\");
+        }
+    }
+
+    // Method untuk mengatur fire rate dari luar
+    public void SetFireRate(int milliseconds)
+    {
+        FireRateMs = milliseconds;
+        GD.Print($\"TileEnd fire rate set to {FireRateMs}ms\");
+    }
+
+    // Method untuk toggle auto fire
+    public void SetAutoFire(bool enabled)
+    {
+        AutoFire = enabled;
+        GD.Print($\"TileEnd auto fire set to {enabled}\");
+    }
+
+    // Method untuk set damage
+    public void SetDamage(int damage)
+    {
+        ProjectileDamage = damage;
+        GD.Print($\"TileEnd damage set to {ProjectileDamage}\");
+    }
+
+    // Method untuk manual fire (jika diperlukan)
+    public void ManualFire()
+    {
+        FireProjectile();
+    }
+}"
 
 [node name="convert" instance=ExtResource("1_my7bf")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.80098, 0)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 1.5, 0)
+script = SubResource("CSharpScript_t671f")
+ProjectileType = ExtResource("3_xtswe")
+FireRateMs = null
+DetectionRange = null
+AutoFire = null
 
 [node name="texture_pbr_v128" parent="." index="0"]
 transform = Transform3D(4, 0, 0, 0, -1.74846e-07, -4, 0, 4, -1.74846e-07, 0, 0.885128, 0)

@@ -28,10 +28,10 @@ public partial class Main : Node3D
 	[Export] public int Cash { get; set; } = 100;
 
 	// Property untuk player health dengan real-time UI update
-	private int _playerHealth = 20;
-	[Export] 
-	public int PlayerHealth 
-	{ 
+	private int _playerHealth = 5; // Ubah dari 20 ke 5
+	[Export]
+	public int PlayerHealth
+	{
 		get => _playerHealth;
 		set
 		{
@@ -39,12 +39,12 @@ public partial class Main : Node3D
 			UpdateHealthUI(); // Otomatis update UI setiap kali health berubah
 		}
 	}
-	[Export] public int MaxHealth { get; set; } = 20;
-	
+	[Export] public int MaxHealth { get; set; } = 5; // Ubah dari 20 ke 5
+
 	// UI elements untuk health
 	private Label healthLabel;
 	private ProgressBar healthBar;
-	
+
 	// TAMBAHAN: Pause system
 	private PauseMenu pauseMenu;
 
@@ -72,9 +72,9 @@ public partial class Main : Node3D
 	{
 		BASIC_ENEMY_SETTINGS = GD.Load<Resource>("res://resources/basic_enemy_settings.res");
 		POWER_ENEMY_SETTINGS = GD.Load<Resource>("res://resources/power_enemy_settings.res");
-		
+
 		cam = GetNode<Camera3D>("Camera3D");
-		
+
 		// Akses PathGenInstance dengan error checking
 		PathGenInstance = GetNode("/root/PathGenInstance") as PathGenerator;
 		if (PathGenInstance == null)
@@ -82,17 +82,17 @@ public partial class Main : Node3D
 			GD.PrintErr("PathGenInstance not found! Check AutoLoad settings.");
 			return;
 		}
-		
+
 		// Debug PathGen info
 		GD.Print($"PathGenInstance found: {PathGenInstance}");
 		GD.Print($"Map config: {PathGenInstance.path_config}");
-		
+
 		// Inisialisasi UI health dengan initial value assignment
 		try
 		{
 			healthLabel = GetNode<Label>("Control/HealthLabel");
 			healthBar = GetNode<ProgressBar>("Control/HealthBar");
-			
+
 			// Set initial values
 			if (healthBar != null)
 			{
@@ -107,7 +107,7 @@ public partial class Main : Node3D
 			healthLabel = null;
 			healthBar = null;
 		}
-		
+
 		// TAMBAHAN: Setup pause menu
 		try
 		{
@@ -125,7 +125,7 @@ public partial class Main : Node3D
 		{
 			GD.PrintErr($"Failed to setup pause menu: {e.Message}");
 		}
-		
+
 		CompleteGrid();
 	}
 
@@ -150,14 +150,14 @@ public partial class Main : Node3D
 
 	private async void SpawnWave()
 	{
-		if (currentWaveIndex >= EnemyWaves.Count) 
+		if (currentWaveIndex >= EnemyWaves.Count)
 		{
 			GD.Print("No more waves available");
 			return;
 		}
-		
+
 		GD.Print($"Starting wave {currentWaveIndex}");
-		
+
 		// Akses Wave resource dengan benar
 		var waveResource = EnemyWaves[currentWaveIndex] as Wave;
 		if (waveResource == null)
@@ -165,7 +165,7 @@ public partial class Main : Node3D
 			GD.Print("Wave resource is null");
 			return;
 		}
-		
+
 		var enemyWave = waveResource.Enemies;
 		waveSpawned = false;
 		enemiesRemaining = 0;
@@ -176,16 +176,16 @@ public partial class Main : Node3D
 		{
 			await ToSignal(GetTree().CreateTimer(enemyWave[i].NextEnemyDelay), SceneTreeTimer.SignalName.Timeout);
 			GD.Print($"Instantiating enemy {i + 1}");
-			
+
 			var enemy2 = Enemy.Instantiate() as BasicEnemy;
 			if (enemy2 == null)
 			{
 				GD.Print("Failed to instantiate enemy");
 				continue;
 			}
-			
+
 			enemy2.EnemySettings = enemyWave[i];
-			
+
 			AddChild(enemy2);
 			enemy2.AddToGroup("enemies");
 			enemiesRemaining += 1;
@@ -214,7 +214,7 @@ public partial class Main : Node3D
 		var pathRoute = PathGenInstance.get_path_route();
 
 		GD.Print($"Map size: {mapLength}x{mapHeight}, Path length: {pathRoute.Count}");
-		
+
 		// Debug: Print path route content
 		GD.Print($"PathRoute type: {pathRoute.GetType()}");
 		for (int i = 0; i < pathRoute.Count; i++)
@@ -224,12 +224,12 @@ public partial class Main : Node3D
 
 		// Convert pathRoute to List<Vector2I> dengan cara yang lebih sederhana
 		var pathRouteList = new System.Collections.Generic.List<Vector2I>();
-		
+
 		for (int i = 0; i < pathRoute.Count; i++)
 		{
 			var point = pathRoute[i];
 			Vector2I vector2I;
-			
+
 			try
 			{
 				// Coba konversi langsung dari Variant ke Vector2
@@ -249,11 +249,11 @@ public partial class Main : Node3D
 					continue;
 				}
 			}
-			
+
 			pathRouteList.Add(vector2I);
 			GD.Print($"Added to pathRouteList: {vector2I}");
 		}
-		
+
 		GD.Print($"Final pathRouteList count: {pathRouteList.Count}");
 
 		// Debug: Pastikan semua tile resources ada
@@ -263,7 +263,7 @@ public partial class Main : Node3D
 		GD.Print($"TileStraight: {TileStraight}");
 		GD.Print($"TileCorner: {TileCorner}");
 		GD.Print($"TileCrossroads: {TileCrossroads}");
-		
+
 		if (TileEmpty == null || TileEmpty.Count == 0)
 		{
 			GD.PrintErr("TileEmpty is null or empty!");
@@ -276,7 +276,7 @@ public partial class Main : Node3D
 			for (int y = 0; y < mapHeight; y++)
 			{
 				var currentPos = new Vector2I(x, y);
-				
+
 				if (!pathRouteList.Contains(currentPos))
 				{
 					// pick_random equivalent
@@ -296,7 +296,7 @@ public partial class Main : Node3D
 			int tileScore = PathGenInstance.get_tile_score(i);
 			var pathTile = PathGenInstance.get_path_tile(i);
 			GD.Print($"Tile {i}: score {tileScore}, position {pathTile}");
-			
+
 			var tile = TileEmpty[0].Instantiate() as Node3D;
 			var tileRotation = Vector3.Zero;
 
@@ -304,7 +304,7 @@ public partial class Main : Node3D
 			if (tileScore == 2)
 			{
 				tile = TileEnd.Instantiate() as Node3D;
-				tileRotation = new Vector3(0, -90, 0);
+				tileRotation = new Vector3(0, 0, 0);
 			}
 			else if (tileScore == 8)
 			{
@@ -364,9 +364,9 @@ public partial class Main : Node3D
 	{
 		PlayerHealth -= damage; // Ini akan otomatis trigger UpdateHealthUI via property setter
 		PlayerHealth = Mathf.Max(0, PlayerHealth);
-		
+
 		GD.Print($"Player took {damage} damage! Health: {PlayerHealth}/{MaxHealth}");
-		
+
 		// Check game over IMMEDIATELY setelah damage
 		if (PlayerHealth <= 0)
 		{
@@ -378,7 +378,7 @@ public partial class Main : Node3D
 	private void UpdateHealthUI()
 	{
 		if (healthLabel != null)
-			healthLabel.Text = $"Health: {PlayerHealth}/{MaxHealth}";
+			healthLabel.Text = $"Kondisi Rempah: {PlayerHealth}/{MaxHealth}"; // Ubah label
 		if (healthBar != null)
 			healthBar.Value = PlayerHealth;
 	}
@@ -399,7 +399,7 @@ public partial class Main : Node3D
 	{
 		currentWaveIndex += 1;
 		GetNode<Button>("StartWaveButton").Disabled = false;
-		
+
 		// Check if all waves completed
 		CheckGameEnd();
 	}

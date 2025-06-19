@@ -7,6 +7,13 @@ public partial class DefeatScreen : Control
 
     public override void _Ready()
     {
+        // Update defeat message untuk menampilkan "Rempah Telah Dicuri"
+        var messageLabel = GetNode<Label>("MainPanel/VBoxContainer/MessageLabel");
+        if (messageLabel != null)
+        {
+            messageLabel.Text = "REMPAH TELAH DICURI!\nPerdagangan Nusantara Telah Runtuh";
+        }
+
         // Optional: Play defeat sound effect
         // AudioManager.PlayDefeatSound();
     }
